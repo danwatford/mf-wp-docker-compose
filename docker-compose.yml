@@ -4,12 +4,14 @@ services:
   wp:
     image: wordpress:latest # https://hub.docker.com/_/wordpress/
     ports:
-      - ${IP}:80:80 # change ip if required
+      - ${IP}:80:80
+      - ${IP}:443:443
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./wp-app:/var/www/html # Full wordpress project
-      #- ./plugin-name/trunk/:/var/www/html/wp-content/plugins/plugin-name # Plugin development
-      #- ./theme-name/trunk/:/var/www/html/wp-content/themes/theme-name # Theme development
+      - ./wp-init.sh:/usr/local/bin/apache2-custom.sh
+      - ./bfw-plugin/:/var/www/html/wp-content/plugins/broadstairs-folk-week-wp-plugin
+      - ./bfw-theme/:/var/www/html/wp-content/themes/bfw
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: "${DB_NAME}"
@@ -19,6 +21,7 @@ services:
       - db
     links:
       - db
+    command: "bash -c apache2-custom.sh"
 
   wpcli:
     image: wordpress:cli

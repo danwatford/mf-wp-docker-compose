@@ -1,153 +1,65 @@
-# WPDC - WordPress Docker Compose
+# Broadstairs Folk Week -  WordPress Docker Compose
 
-Easy WordPress development with Docker and Docker Compose.
+Tools to local development of the Broadstairs Folk Week Website.
 
-With this project you can quickly run the following:
+Based on https://github.com/nezhar/wordpress-docker-compose
 
-- [WordPress and WP CLI](https://hub.docker.com/_/wordpress/)
-- [phpMyAdmin](https://hub.docker.com/r/phpmyadmin/phpmyadmin/)
-- [MySQL](https://hub.docker.com/_/mysql/)
-
-Contents:
-
-- [Requirements](#requirements)
-- [Configuration](#configuration)
-- [Installation](#installation)
-- [Usage](#usage)
+Based on retrieved copies of the Broadstairs Folk Week website files and database, this docker-compose project can be used
+to work on the website's custom theme and plugin, while using the latest wordpress files (including plugins) as used on the 
+productioni site.
 
 ## Requirements
 
-Make sure you have the latest versions of **Docker** and **Docker Compose** installed on your machine.
+Docker and Docker Compose must be installed.
 
-Clone this repository or copy the files from this repository into a new folder. In the **docker-compose.yml** file you may change the IP address (in case you run multiple containers) or the database from MySQL to MariaDB.
+## Usage
 
-Make sure to [add your user to the `docker` group](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user) when using Linux.
+Download the SQL dump of the live wordpress database and place in the wp-data directory.
 
-## Configuration
+Download the website files and place in the wp-app directory.
 
-Edit the `.env` file to change the default IP address, MySQL root password and WordPress database name.
+Clone/checkout the Broadstairs Folk Week theme to the bfw-theme directory. You may need to create this directory.
 
-## Installation
+Clone/checkout the Broadstairs Folk Week plugin to the bfw-plugin directory. You may need to create this directory.
 
-Open a terminal and `cd` to the folder in which `docker-compose.yml` is saved and run:
+The run the website:
 
 ```
 docker-compose up
 ```
 
-This creates two new folders next to your `docker-compose.yml` file.
-
-* `wp-data` – used to store and restore database dumps
-* `wp-app` – the location of your WordPress application
-
-The containers are now built and running. You should be able to access the WordPress installation with the configured IP in the browser address. By default it is `http://127.0.0.1`.
-
-For convenience you may add a new entry into your hosts file.
-
-## Usage
-
-### Starting containers
-
-You can start the containers with the `up` command in daemon mode (by adding `-d` as an argument) or by using the `start` command:
-
-```
-docker-compose start
-```
-
-### Stopping containers
-
-```
-docker-compose stop
-```
-
-### Removing containers
-
-To stop and remove all the containers use the`down` command:
+To stop the webiste:
 
 ```
 docker-compose down
 ```
 
-Use `-v` if you need to remove the database volume which is used to persist the database:
+To remove the volumes associated with the project:
 
 ```
 docker-compose down -v
 ```
 
-### Project from existing source
+## Changes to the upstream project (https://github.com/nezhar/wordpress-docker-compose)
 
-Copy the `docker-compose.yml` file into a new directory. In the directory you create two folders:
+The Broadstairs Folk Week website uses HTTPS. The wordpress image used by this project uses apache, but doesn't include
+any SSL certificates. To work around this certificates will be installed as start up based on the technique described by
+https://github.com/ogierschelvis in PR https://github.com/docker-library/wordpress/issues/46#issuecomment-358266189
 
-* `wp-data` – here you add the database dump
-* `wp-app` – here you copy your existing WordPress code
+When starting the wordpress plugin docker has been configured to run a bespoke script file, wp-init.sh, which installs
+the certificates before launching apache.
 
-You can now use the `up` command:
+## Fixing data
 
-```
-docker-compose up
-```
+The database dump placed in wp-data will contain references to the live https://broadstairsfolkweek.org.uk website.
 
-This will create the containers and populate the database with the given dump. You may set your host entry and change it in the database, or you simply overwrite it in `wp-config.php` by adding:
+For development we want to modify that data to use references to localhost.
 
-```
-define('WP_HOME','http://wp-app.local');
-define('WP_SITEURL','http://wp-app.local');
-```
+When the mysql container starts it will look for files in /docker-entrypoint-initdb.d, which is bind mounted from the
+wp-data directory. Any .sh files are treated as scripts and sourced. Any .sql files are executed against the configured 
+database.
 
-### Creating database dumps
+A new script, 01-replace-urls.sh, has been added to wp-data to replace https://broadstairsfolkweek.org.uk in any .sql
+files with http://localhsot.
 
-```
-./export.sh
-```
-
-### Developing a Theme
-
-Configure the volume to load the theme in the container in the `docker-compose.yml`:
-
-```
-volumes:
-  - ./theme-name/trunk/:/var/www/html/wp-content/themes/theme-name
-```
-
-### Developing a Plugin
-
-Configure the volume to load the plugin in the container in the `docker-compose.yml`:
-
-```
-volumes:
-  - ./plugin-name/trunk/:/var/www/html/wp-content/plugins/plugin-name
-```
-
-### WP CLI
-
-The docker compose configuration also provides a service for using the [WordPress CLI](https://developer.wordpress.org/cli/commands/).
-
-Sample command to install WordPress:
-
-```
-docker-compose run --rm wpcli core install --url=http://localhost --title=test --admin_user=admin --admin_email=test@example.com
-```
-
-Or to list installed plugins:
-
-```
-docker-compose run --rm wpcli plugin list
-```
-
-For an easier usage you may consider adding an alias for the CLI:
-
-```
-alias wp="docker-compose run --rm wpcli"
-```
-
-This way you can use the CLI command above as follows:
-
-```
-wp plugin list
-```
-
-### phpMyAdmin
-
-You can also visit `http://127.0.0.1:8080` to access phpMyAdmin after starting the containers.
-
-The default username is `root`, and the password is the same as supplied in the `.env` file.
+By prefixing the script with 01 we should ensure it is run before the .sql file is imported into the database.
