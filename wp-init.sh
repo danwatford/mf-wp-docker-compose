@@ -12,5 +12,14 @@ a2dissite 000-default.conf
 #a2ensite apache2-vhosts.conf
 a2ensite default-ssl.conf
 
+# Setup local config for wordpress
+cat > /var/www/html/local-config.php <<EOF
+<?php
+
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+EOF
+
 # finally execute default command
 docker-entrypoint.sh apache2-foreground
