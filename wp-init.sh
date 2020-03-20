@@ -21,5 +21,8 @@ define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);
 EOF
 
+mkdir /var/www/html/wp-content/mu-plugins
+find /mu-plugins -type f -exec cp {} /var/www/html/wp-content/mu-plugins \;
+
 # finally execute default command
 docker-entrypoint.sh apache2-foreground
