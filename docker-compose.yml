@@ -62,5 +62,12 @@ services:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
 
+  gulp:
+    build: gulp-sass
+    volumes:
+      - ./gulp-sass/src:/site/src
+      - ./bfw-theme:/site/theme
+    command: gulp --gulpfile src/gulpfile.js
+
 volumes:
   db_data:
