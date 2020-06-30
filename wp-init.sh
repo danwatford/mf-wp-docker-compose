@@ -24,5 +24,7 @@ EOF
 mkdir /var/www/html/wp-content/mu-plugins
 find /mu-plugins -type f -exec cp {} /var/www/html/wp-content/mu-plugins \;
 
+chown www-data:www-data -R /var/www/html
+
 # finally execute default command
 docker-entrypoint.sh apache2-foreground
