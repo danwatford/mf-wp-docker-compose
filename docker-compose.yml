@@ -8,7 +8,7 @@ services:
       - ${IP}:443:443
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
-      - ./wp-app:/var/www/html # Full wordpress project
+      - ./public_html:/var/www/html # Full wordpress project
       - ./bfw-plugin/:/var/www/html/wp-content/plugins/broadstairs-folk-week-wp-plugin
       - ./bfw-theme/:/var/www/html/wp-content/themes/bfw
       - ./mu-plugins/:/mu-plugins
@@ -27,7 +27,7 @@ services:
     image: wordpress:cli
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
-      - ./wp-app:/var/www/html
+      - ./public_html:/var/www/html
     depends_on:
       - db
       - wp

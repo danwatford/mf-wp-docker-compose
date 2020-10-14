@@ -16,7 +16,7 @@ Docker and Docker Compose must be installed.
 
 Download the SQL dump of the live wordpress database and place in the wp-data directory.
 
-Download the website files and place in the wp-app directory.
+Download the website files and place in the public_html directory.
 
 Clone/checkout the Broadstairs Folk Week theme to the bfw-theme directory. You may need to create this directory.
 
