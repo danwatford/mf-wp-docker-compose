@@ -1,5 +1,6 @@
 
 wp-app/
+public_html/
 
 wp-data/*
 !wp-data/01-replace-urls.sh
