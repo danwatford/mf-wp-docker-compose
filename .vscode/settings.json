@@ -1,5 +1,7 @@
 {
     "files.watcherExclude": {
         "**/wp-app/**": true
-    }
+    },
+    "php.validate.executablePath": "scripts/docker-php-linter.sh",
+    "php.validate.run": "onType"
 }
