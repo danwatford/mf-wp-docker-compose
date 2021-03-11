@@ -9,9 +9,6 @@ services:
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./public_html:/var/www/html # Full wordpress project
-      - ./bfw-plugin/:/var/www/html/wp-content/plugins/broadstairs-folk-week-wp-plugin
-      - ./bfw-theme/:/var/www/html/wp-content/themes/bfw
-      - ./mu-plugins/:/mu-plugins
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: "${DB_NAME}"
