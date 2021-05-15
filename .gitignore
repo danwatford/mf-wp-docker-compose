@@ -3,7 +3,7 @@ wp-app/
 public_html/
 
 wp-data/*
-!wp-data/01-replace-urls.sh
+!wp-data/zz_set_site_address.sql
 
 bfw-plugin/
 bfw-theme/

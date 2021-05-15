@@ -1,12 +1,12 @@
 # Morris Federation -  WordPress Docker Compose
 
-Tools to local development of the Morris Federation Website.
+Tools for local development of the Morris Federation Website.
 
 Based on https://github.com/danwatford/bfw-wordpress-docker-compose
 
 Based on retrieved copies of the Morris Federation website files and database, this docker-compose project can be used
-to work on the website's custom theme and plugin, while using the latest wordpress files (including plugins) as used on the 
-productioni site.
+to work on the website's custom theme and plugins, while using the latest wordpress files (including plugins) as used on the 
+production site.
 
 ## Requirements
 
@@ -18,7 +18,7 @@ Download the SQL dump of the live wordpress database and place in the wp-data di
 
 Download the website files and place in the public_html directory.
 
-The run the website:
+To run the website:
 
 ```
 docker-compose up
@@ -39,17 +39,15 @@ docker-compose down -v
 ## Changes to the upstream project (https://github.com/nezhar/wordpress-docker-compose)
 
 The Morris Federation website uses HTTPS. The wordpress image used by this project uses apache, but doesn't include
-any SSL certificates. To work around this certificates will be installed as start up based on the technique described by
+any SSL certificates. To work around this an extension to the WordPress container image is build (see wp/ directory)
+with certificates installed based on the technique described by
 https://github.com/ogierschelvis in PR https://github.com/docker-library/wordpress/issues/46#issuecomment-358266189
-
-When starting the wordpress plugin docker has been configured to run a bespoke script file, wp-init.sh, which installs
-the certificates before launching apache.
 
 ## Fixing data
 
 The database dump placed in wp-data will contain references to the live https://www.morrisfed.org.uk website.
 
-For development we want to modify that data to use references to localhost.
+For development we want to modify that data to use references to localhost instead.
 
 When the mysql container starts it will look for files in /docker-entrypoint-initdb.d, which is bind mounted from the
 wp-data directory. Any .sh files are treated as scripts and sourced. Any .sql files are executed against the configured 
@@ -59,3 +57,10 @@ A new script, 01-replace-urls.sh, has been added to wp-data to replace https://w
 files with http://localhsot.
 
 By prefixing the script with 01 we should ensure it is run before the .sql file is imported into the database.
+
+## Morris Federation Theme
+
+The Morris Federation theme for wordpress is in directory, morrisfed2021. This directory is bind mounted into the 
+WordPress container and can be selected for use in the WordPress dashboard.
+
+The theme is based on Genesis Sample and uses the Genesis Framework.

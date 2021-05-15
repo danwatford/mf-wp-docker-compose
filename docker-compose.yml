@@ -9,6 +9,7 @@ services:
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./public_html:/var/www/html # Full wordpress project
+      - ./morrisfed2021:/var/www/html/wp-content/themes/morrisfed2021
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: "${DB_NAME}"
@@ -19,15 +20,6 @@ services:
       - db
     links:
       - db
-
-  wpcli:
-    image: wordpress:cli
-    volumes:
-      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
-      - ./public_html:/var/www/html
-    depends_on:
-      - db
-      - wp
 
   pma:
     image: phpmyadmin/phpmyadmin
